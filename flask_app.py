@@ -20,9 +20,10 @@ model = None
 
 def load_yolov5_model():
     global model
+    print('load yolov5s start')
     model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
     model.eval()
-
+    print("load yolov5s end")
 @app.route("/", methods=["POST"])
 def predict():
     try:
@@ -35,7 +36,9 @@ def predict():
             
         img_bytes = file.read()
         img = Image.open(io.BytesIO(img_bytes))
+        print('predict start')
         results = model(img)  # inference
+        print('predict end')
         results.render()  # updates results.ims with boxes and labels
             
         # Save the image with detection labels
@@ -81,7 +84,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Flask app exposing yolov5 models")
     parser.add_argument("--port", default=5000, type=int, help="port number")
     args = parser.parse_args()
-
+    print("Start model...")
     load_yolov5_model()  # Load the model before starting the server
-
+    print("called the model")
     app.run(host="0.0.0.0", port=args.port)
